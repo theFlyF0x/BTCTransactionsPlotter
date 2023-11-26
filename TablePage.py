@@ -14,8 +14,8 @@ class TablePage(QTableWidget):
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
 
-
     def set_data(self, data):
+        """Populates the table by parsing the transactions to add cells"""
         for row, transaction in enumerate(data):
             if transaction[0]:
                 self.setItem(row, 0, QTableWidgetItem('Sent'))

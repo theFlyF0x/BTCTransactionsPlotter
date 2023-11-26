@@ -9,14 +9,11 @@ from PyQt5.QtGui import *
 
 BASE_URL = 'https://blockchain.info/rawaddr/'
 
-address = 'bc1qw9uxxvkf6qk98ly5u0s4ehtl5cf8wjl0jy6cql'
+address = 'bc1qw9uxxvkf6qk98ly5u0s4ehtl5cf8wjl0jy6cql'  # Selected address. TODO make this selectable by user
 full_url = BASE_URL + address
 
 content = pd.read_json(full_url)
 transactions = content['txs']
-
-#out_trx = content['txs'][16]['out']
-#transaction = [tr for tr in out_trx if tr['addr'] == address]
 
 
 def get_senders(transaction):
@@ -44,6 +41,7 @@ if __name__ == '__main__':
         record['Amount'] = amount
         record['Balance'] = transaction['balance']
 
+        # Checking if the selected address is a sender or a receiver
         senders = []
         recipients = []
         if record['IsReceived']:
@@ -58,7 +56,7 @@ if __name__ == '__main__':
 
         data.append(record)
 
-    table_of_transactions = pd.DataFrame(data)
+    table_of_transactions = pd.DataFrame(data)  # Final DataFrame processed
 
     graph = nx.DiGraph()
     for i, element in table_of_transactions.iterrows():  # Add edges to the network
@@ -70,14 +68,13 @@ if __name__ == '__main__':
                 graph.add_edge(address, recipient, is_received=False)
 
     app = QApplication(sys.argv)
-    app.aboutToQuit.connect(app.deleteLater)
-    app.setStyle(QStyleFactory.create("gtk"))
+    app.setStyle(QStyleFactory.create("gtk"))  # idk what this does...
 
-    tabs = QTabWidget()
-    tabs.resize(1350, 1000)
+    tabs = QTabWidget()  # Object for multiple tabs in a page
+    tabs.resize(1350, 1000)  # Size of the window. Should be changed eventually
     tabs.setWindowTitle("BTC Transacions Plotter")
-    tabs.addTab(NetworkPage(graph, address), "Network")
-    tabs.addTab(TablePage(table_of_transactions), "Table View")
+    tabs.addTab(NetworkPage(graph, address), "Network")  # First tab
+    tabs.addTab(TablePage(table_of_transactions), "Table View")  # Second tab
     tabs.show()
 
     sys.exit(app.exec_())

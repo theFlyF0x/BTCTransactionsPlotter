@@ -1,0 +1,4 @@
+
+
+class GraphPage():
+    pass
