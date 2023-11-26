@@ -1,7 +1,8 @@
 import sys
 import pandas as pd
 import networkx as nx
-from view import UserInterface
+from NetworkPage import NetworkPage
+from TablePage import TablePage
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -63,15 +64,20 @@ if __name__ == '__main__':
     for i, element in table_of_transactions.iterrows():  # Add edges to the network
         if element['IsReceived']:
             for sender in element['Senders']:  # Multiple senders handling
-                graph.add_edge(address, sender)
+                graph.add_edge(address, sender, is_received=True)
         else:
             for recipient in element['Recipients']:  # Multiple recipients handling
-                graph.add_edge(address, recipient)
+                graph.add_edge(address, recipient, is_received=False)
 
     app = QApplication(sys.argv)
     app.aboutToQuit.connect(app.deleteLater)
     app.setStyle(QStyleFactory.create("gtk"))
-    screen = UserInterface(graph, address)
-    screen.show()
-    screen.initUI()
+
+    tabs = QTabWidget()
+    tabs.resize(1350, 1000)
+    tabs.setWindowTitle("BTC Transacions Plotter")
+    tabs.addTab(NetworkPage(graph, address), "Network")
+    tabs.addTab(TablePage(table_of_transactions), "Table View")
+    tabs.show()
+
     sys.exit(app.exec_())
