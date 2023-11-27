@@ -9,11 +9,12 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 class NetworkPage(QWidget):
     
-    def __init__(self, graph, address):
+    def __init__(self, graph, address, transactions):
         super(NetworkPage, self).__init__()
         font = QFont()
         self.graph = graph
         self.address = address
+        self.transactions = transactions
 
         self.initUI()
 
@@ -46,7 +47,7 @@ class NetworkPage(QWidget):
         nx.draw_networkx_labels(self.graph, pos, self.__get_labels(set(self.graph)))
 
         plt.title('BTC addresses linked to ' + self.address)
-        plt.legend(scatterpoints=1)  # TODO make legend work
+        plt.legend(self.graph.nodes(), fontsize=12)  # TODO make legend work
         plt.axis('off')
 
     def __get_labels(self, addresses):
@@ -56,25 +57,14 @@ class NetworkPage(QWidget):
             labels[address] = address[0:3] + '-' + address[-4:-1]
         return labels
 
-    def __get_colors(self, graph):  # TODO fix this
+    def __get_colors(self, transactions):  # TODO fix this
         """Sorts the colors based on whether coins were received, sent or both"""
         green, red, yellow = [], [], []
-        for _, tgt, attributes in graph.edges(data=True): # loop all the edges in the network
+        for transaction in transactions.iterrows():  # loop all the edges in the network
             # Check if the address was already processed
-            if tgt in yellow:
-                continue
-            elif tgt in red:
-                red.remove(tgt)
-                yellow.append(tgt)
-            elif tgt in green:
-                green.remove(tgt)
-                yellow.append(tgt)
-            else:
-                # Give address a color
-                if attributes['is_received']:
-                    green.append(tgt)
-                else:
-                    red.append(tgt)
+            if transaction['IsReceived']:
+                if transaction['Gabibbo']:
+                    print('idk')
 
         return green, red, yellow
 

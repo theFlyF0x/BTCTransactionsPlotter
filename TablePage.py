@@ -3,6 +3,22 @@ from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 
 class TablePage(QTableWidget):
 
+    style = """
+        QHeaderView::section {
+            background-color: rgba(0, 40, 118, 0.1);
+            border: 1px solid black;
+            font-size: 16px;
+            gridline-color: black;
+            font-weight: 450;
+            font-family: cursive;
+        }
+        
+        QTableWidget {
+            border: 0.5px solid black;
+            font-family: system-ui;
+        }
+    """
+
     def __init__(self, data):
         super(TablePage, self).__init__()
         self.data = data.values.tolist()
@@ -13,6 +29,7 @@ class TablePage(QTableWidget):
         self.set_data(self.data)
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
+        self.setStyleSheet(self.style)
 
     def set_data(self, data):
         """Populates the table by parsing the transactions to add cells"""

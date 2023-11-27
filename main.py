@@ -3,6 +3,7 @@ import pandas as pd
 import networkx as nx
 from NetworkPage import NetworkPage
 from TablePage import TablePage
+from GraphPage import GraphPage
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -75,6 +76,7 @@ if __name__ == '__main__':
     tabs.setWindowTitle("BTC Transacions Plotter")
     tabs.addTab(NetworkPage(graph, address), "Network")  # First tab
     tabs.addTab(TablePage(table_of_transactions), "Table View")  # Second tab
+    tabs.addTab(GraphPage(table_of_transactions), "Graph View")  # Third tab
     tabs.show()
 
     sys.exit(app.exec_())
