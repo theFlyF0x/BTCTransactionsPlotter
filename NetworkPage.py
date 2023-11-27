@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import networkx as nx
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
@@ -38,16 +39,24 @@ class NetworkPage(QWidget):
 
         options = {"edgecolors": "tab:gray", "node_size": 800, "alpha": 0.9}
         # Color nodes
-        green, red, yellow = self.__get_colors(self.graph)
+        green, red, yellow = self.__get_colors(self.transactions)
         nx.draw_networkx_nodes(self.graph, pos, nodelist=green, node_color="tab:green", **options)
         nx.draw_networkx_nodes(self.graph, pos, nodelist=red, node_color="tab:red", **options)
         nx.draw_networkx_nodes(self.graph, pos, nodelist=yellow, node_color="tab:yellow", **options)
 
-        nx.draw_networkx_edges(self.graph, pos, arrows=False)
-        nx.draw_networkx_labels(self.graph, pos, self.__get_labels(set(self.graph)))
+        nx.draw_networkx_edges(self.graph, pos, arrows=False)  # Draw edges
+        nx.draw_networkx_labels(self.graph, pos, self.__get_labels(set(self.graph)))  # Process labels and place them
+
+        legend = [  # Contents of the legend
+            Line2D([0], [0], marker='o', color='w', label='Transaction Sent to', markerfacecolor='r', markersize=15),
+            Line2D([0], [0], marker='o', color='w', label='Transaction Received from', markerfacecolor='g',
+                   markersize=15),
+            Line2D([0], [0], marker='o', color='w', label='Both Received and Sent to', markerfacecolor='y',
+                   markersize=15),
+        ]
 
         plt.title('BTC addresses linked to ' + self.address)
-        plt.legend(self.graph.nodes(), fontsize=12)  # TODO make legend work
+        plt.legend(handles=legend, loc='upper right')
         plt.axis('off')
 
     def __get_labels(self, addresses):
@@ -57,14 +66,25 @@ class NetworkPage(QWidget):
             labels[address] = address[0:3] + '-' + address[-4:-1]
         return labels
 
-    def __get_colors(self, transactions):  # TODO fix this
+    def __get_colors(self, transactions):
         """Sorts the colors based on whether coins were received, sent or both"""
         green, red, yellow = [], [], []
-        for transaction in transactions.iterrows():  # loop all the edges in the network
+        for _, transaction in transactions.iterrows():  # loop all the edges in the network
             # Check if the address was already processed
             if transaction['IsReceived']:
-                if transaction['Gabibbo']:
-                    print('idk')
+                for tr in transaction['Senders']:
+                    if tr in red:
+                        yellow.append(tr)
+                        red.remove(tr)
+                    else:
+                        green.append(tr)
+            else:
+                for tr in transaction['Recipients']:
+                    if tr in green:
+                        yellow.append(tr)
+                        green.remove(tr)
+                    else:
+                        red.append(tr)
 
         return green, red, yellow
 

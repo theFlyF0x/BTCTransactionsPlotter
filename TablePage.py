@@ -35,13 +35,13 @@ class TablePage(QTableWidget):
         """Populates the table by parsing the transactions to add cells"""
         for row, transaction in enumerate(data):
             if transaction[0]:
-                self.setItem(row, 0, QTableWidgetItem('Sent'))
-                self.setItem(row, 3, QTableWidgetItem(';  '.join(transaction[3])))
+                self.setItem(row, 0, QTableWidgetItem('Received'))
+                self.setItem(row, 3, QTableWidgetItem(';  \n'.join(transaction[3])))
                 self.setItem(row, 4, QTableWidgetItem(transaction[4]))
             else:
-                self.setItem(row, 0, QTableWidgetItem('Received'))
+                self.setItem(row, 0, QTableWidgetItem('Sent'))
                 self.setItem(row, 3, QTableWidgetItem(transaction[3]))
-                self.setItem(row, 4, QTableWidgetItem(';  '.join(transaction[4])))
+                self.setItem(row, 4, QTableWidgetItem(';  \n'.join(transaction[4])))
 
             self.setItem(row, 1, QTableWidgetItem(str(transaction[1])))
             self.setItem(row, 2, QTableWidgetItem(str(transaction[2])))

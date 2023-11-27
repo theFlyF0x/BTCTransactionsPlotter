@@ -74,7 +74,7 @@ if __name__ == '__main__':
     tabs = QTabWidget()  # Object for multiple tabs in a page
     tabs.resize(1350, 1000)  # Size of the window. Should be changed eventually
     tabs.setWindowTitle("BTC Transacions Plotter")
-    tabs.addTab(NetworkPage(graph, address), "Network")  # First tab
+    tabs.addTab(NetworkPage(graph, address, table_of_transactions), "Network")  # First tab
     tabs.addTab(TablePage(table_of_transactions), "Table View")  # Second tab
     tabs.addTab(GraphPage(table_of_transactions), "Graph View")  # Third tab
     tabs.show()
