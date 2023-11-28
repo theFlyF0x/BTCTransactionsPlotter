@@ -5,13 +5,10 @@ from TablePage import TablePage
 from GraphPage import GraphPage
 from PyQt5.QtWidgets import QApplication, QTabWidget, QStyleFactory, QWidget, QGridLayout, QHBoxLayout, QLineEdit, \
     QPushButton, QGroupBox
+from utils import retrieve_transactions, process_data
 
-
-# bc1qw9uxxvkf6qk98ly5u0s4ehtl5cf8wjl0jy6cql
 
 class MainPage(QWidget):
-
-    BASE_URL = 'https://blockchain.info/rawaddr/'
 
     def __init__(self):
         super(MainPage, self).__init__()
@@ -32,7 +29,7 @@ class MainPage(QWidget):
         upper_section.setLayout(upper_layout)
         grid.addWidget(upper_section, 0, 0)
 
-        button.clicked.connect(self.retrieve_transactions)
+        button.clicked.connect(self.on_click)
 
         # Lower portion of the screen with tabs for the content
         tabs = QTabWidget()
@@ -45,40 +42,13 @@ class MainPage(QWidget):
         tabs.addTab(self.graph, "Graph View")  # Third tab - graph page
         grid.addWidget(tabs, 1, 0)
 
-    def retrieve_transactions(self):
-        print('sus')
+    def on_click(self):
+        """Actions performed on click of button"""
         self.address = self.textbox.text()
-        full_url = self.BASE_URL + self.address
+        raw_transactions = retrieve_transactions(self.address)
+        transactions = process_data(raw_transactions, self.address)
 
-        content = pd.read_json(full_url)
-        self.process_data(content['txs'])
-
-    def process_data(self, transactions):
-        """Processes the data retrieved from APIs to retrieve only useful parameters"""
-        data = list()
-        for transaction in transactions:  # Extraction of useful data from the original dataframe
-            record = dict()
-            amount = transaction['result']
-            record['IsReceived'] = amount > 0
-            record['Amount'] = amount
-            record['Balance'] = transaction['balance']
-
-            # Checking if the selected address is a sender or a receiver
-            senders = []
-            recipients = []
-            if record['IsReceived']:
-                senders = self.get_senders(transaction)
-                recipients = self.address
-            else:
-                senders = self.address
-                recipients = self.get_recipients(transaction)
-
-            record['Senders'] = senders
-            record['Recipients'] = recipients
-
-            data.append(record)
-
-        self.set_pages(pd.DataFrame(data))  # Final DataFrame processed
+        self.set_pages(transactions)
 
     def set_pages(self, transactions):
         """Sets the pages of the UI"""
@@ -90,27 +60,13 @@ class MainPage(QWidget):
         self.graph.data = transactions
         self.graph.draw_graph()
 
-    def get_senders(self, transaction):
-        """Returns all the sender addresses in a transaction"""
-        senders = list()
-        for send in transaction['inputs']:
-            senders.append(send['prev_out']['addr'])
-        return senders
-
-    def get_recipients(self, transaction):
-        """Returns all the recipient addresses in a transaction"""
-        recipients = list()
-        for recpt in transaction['out']:
-            recipients.append(recpt['addr'])
-        return recipients
-
 
 if __name__ == '__main__':
 
-    app = QApplication(sys.argv)
-    app.setStyle(QStyleFactory.create("gtk"))  # idk what this does...
+    app = QApplication(sys.argv)  # Create main object
+    app.setStyle(QStyleFactory.create("Fusion"))  # Set style of the window
 
     page = MainPage()
-    page.show()
+    page.show()  # Show the contents of the page
 
     sys.exit(app.exec_())

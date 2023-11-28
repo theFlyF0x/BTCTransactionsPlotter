@@ -24,8 +24,7 @@ The tool utilizes Python and a series of libraries for functioning. Requirements
     git clone https://github.com/theFlyF0x/BTCTransactionsPlotter.git
     cd BTCTransactionsPlotter
     ```
-2. Install requirements
-   TODO make a requirements.txt
+2. Install the required packages listed above
 
 ## Running
 The tools can be run with Python, or it can be compiled into an executable. 
@@ -33,5 +32,7 @@ The tools can be run with Python, or it can be compiled into an executable.
     ```bash
     python main.py
     ```
-2. Compiling into an executable
-    TODO
+2. Compiling into an executable with pyinstaller
+    ```bash
+    pyinstaller --onefile main.py
+    ```
