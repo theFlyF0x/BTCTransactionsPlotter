@@ -19,12 +19,14 @@ class TablePage(QTableWidget):
         }
     """
 
-    def __init__(self, data):
+    def __init__(self):
         super(TablePage, self).__init__()
-        self.data = data.values.tolist()
+        self.data = None
 
+    def draw_table(self):
+        """Draw the table in the page"""
         self.setColumnCount(5)
-        self.setRowCount(len(data.index))
+        self.setRowCount(len(self.data.index))
 
         self.set_data(self.data)
         self.resizeColumnsToContents()
@@ -33,6 +35,7 @@ class TablePage(QTableWidget):
 
     def set_data(self, data):
         """Populates the table by parsing the transactions to add cells"""
+        data = data.values.tolist()
         for row, transaction in enumerate(data):
             if transaction[0]:
                 self.setItem(row, 0, QTableWidgetItem('Received'))

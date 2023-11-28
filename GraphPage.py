@@ -1,15 +1,16 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
-import pandas as pd
 
 
 class GraphPage(QWidget):
 
-    def __init__(self, data):
+    def __init__(self):
         super(GraphPage, self).__init__()
-        self.data = data
+        self.data = None
 
+    def draw_graph(self):
+        """Draw the graph in the page"""
         self.figure = plt.figure(figsize=(5, 5))
         self.canvas = FigureCanvas(self.figure)
 
@@ -31,7 +32,7 @@ class GraphPage(QWidget):
         fill.set_edgecolor((0, 0, .5, .3))
         fill.set_linewidth(3)
         axes.set_xlim(0, len(history))
-        axes.set_ylim(0, max(history)*1.5)
+        axes.set_ylim(0, max(history) * 1.5)
         axes.set_xticks(range(0, len(history), 2))
         axes.xaxis.set_tick_params(size=0)
         axes.yaxis.set_tick_params(size=0)

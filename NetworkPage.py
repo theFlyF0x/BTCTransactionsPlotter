@@ -1,4 +1,3 @@
-from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import networkx as nx
@@ -10,16 +9,14 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 class NetworkPage(QWidget):
     
-    def __init__(self, graph, address, transactions):
+    def __init__(self):
         super(NetworkPage, self).__init__()
         font = QFont()
-        self.graph = graph
-        self.address = address
-        self.transactions = transactions
+        self.address = ''
+        self.transactions = None
 
-        self.initUI()
-
-    def initUI(self):  # TODO rethink almost everything
+    def draw_network(self):  # TODO rethink a pair of things
+        """Draws the network in the page"""
         grid = QGridLayout()
         self.setLayout(grid)
         #self.createVerticalGroupBox()
@@ -32,20 +29,29 @@ class NetworkPage(QWidget):
         grid.addWidget(self.canvas, 0, 1)
         grid.addLayout(buttonLayout, 0, 0)
 
+        graph = nx.DiGraph()
+        for i, element in self.transactions.iterrows():  # Add edges to the network
+            if element['IsReceived']:
+                for sender in element['Senders']:  # Multiple senders handling
+                    graph.add_edge(self.address, sender, is_received=True)
+            else:
+                for recipient in element['Recipients']:  # Multiple recipients handling
+                    graph.add_edge(self.address, recipient, is_received=False)
+
         center_node = self.address
-        edge_nodes = set(self.graph) - {center_node}
-        pos = nx.circular_layout(self.graph.subgraph(edge_nodes))
+        edge_nodes = set(graph) - {center_node}
+        pos = nx.circular_layout(graph.subgraph(edge_nodes))
         pos[center_node] = np.array([0, 0])
 
         options = {"edgecolors": "tab:gray", "node_size": 800, "alpha": 0.9}
         # Color nodes
         green, red, yellow = self.__get_colors(self.transactions)
-        nx.draw_networkx_nodes(self.graph, pos, nodelist=green, node_color="tab:green", **options)
-        nx.draw_networkx_nodes(self.graph, pos, nodelist=red, node_color="tab:red", **options)
-        nx.draw_networkx_nodes(self.graph, pos, nodelist=yellow, node_color="tab:yellow", **options)
+        nx.draw_networkx_nodes(graph, pos, nodelist=green, node_color="tab:green", **options)
+        nx.draw_networkx_nodes(graph, pos, nodelist=red, node_color="tab:red", **options)
+        nx.draw_networkx_nodes(graph, pos, nodelist=yellow, node_color="tab:yellow", **options)
 
-        nx.draw_networkx_edges(self.graph, pos, arrows=False)  # Draw edges
-        nx.draw_networkx_labels(self.graph, pos, self.__get_labels(set(self.graph)))  # Process labels and place them
+        nx.draw_networkx_edges(graph, pos, arrows=False)  # Draw edges
+        nx.draw_networkx_labels(graph, pos, self.__get_labels(set(graph)))  # Process labels and place them
 
         legend = [  # Contents of the legend
             Line2D([0], [0], marker='o', color='w', label='Transaction Sent to', markerfacecolor='r', markersize=15),
