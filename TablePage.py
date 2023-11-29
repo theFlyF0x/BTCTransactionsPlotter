@@ -59,8 +59,8 @@ class TablePage(QTableWidget):
     def color_table(self):
         """Colors rows based on the type of transaction"""
         for row in range(self.rowCount()):
-            for col in range(4):
-                if self.item(row, 0):
-                    self.item(row, col).setBackground(QColor(0, 255, 0, 0.34))
+            for col in range(5):
+                if self.item(row, 0).text() == 'Received':
+                    self.item(row, col).setBackground(QColor(0, 255, 0, 100))
                 else:
-                    self.item(row, col).setBackground(QColor(255, 0, 0, 0.43))
+                    self.item(row, col).setBackground(QColor(255, 0, 0, 100))

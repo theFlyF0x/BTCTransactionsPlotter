@@ -1,5 +1,4 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QVBoxLayout, QPushButton, QGroupBox
-from PyQt5.QtGui import *
 import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
@@ -12,7 +11,6 @@ class NetworkPage(QWidget):
     
     def __init__(self):
         super(NetworkPage, self).__init__()
-        font = QFont()
         self.address = ''
         self.transactions = None
 
@@ -24,10 +22,14 @@ class NetworkPage(QWidget):
         # Add lateral buttons
         buttons_layout = QVBoxLayout()
         button_up = QPushButton('Up a Level')
+        button_down = QPushButton('Down a Level')
         buttons_layout.addWidget(button_up)
+        buttons_layout.addWidget(button_down)
+        buttons_layout.setSpacing(10)
+        buttons_layout.addStretch(2)
         buttons_section = QGroupBox()
         buttons_section.setLayout(buttons_layout)
-        buttons_section.setMaximumWidth(100)
+        buttons_section.setMaximumWidth(115)
 
         button_up.clicked.connect(self.draw_leafs)  # Button event
 

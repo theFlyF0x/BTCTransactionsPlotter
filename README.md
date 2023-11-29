@@ -2,6 +2,8 @@
 
 ## Overview
 The tool retrieves all the transactions linked to a Bitcoin address and allows the user to visualize them with a graph and a table view. It is also possible to view the balance history of the account with a graph in the dedicated section. 
+GUI is created with PyQt5, and the graphs in the tool are plotted with NetworkX and MatPlotLib. Data inserted in the graph is managed with Pandas DataFrame structures. 
+I'm bad at building UIs, so this looks bad. 
 
 ## Features
 
