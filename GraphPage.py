@@ -9,43 +9,44 @@ class GraphPage(QWidget):
         super(GraphPage, self).__init__()
         self.data = None
 
-    def draw_graph(self):
-        """Draw the graph in the page"""
         self.figure = plt.figure(figsize=(5, 5))
         self.canvas = FigureCanvas(self.figure)
-
         self.grid = QGridLayout()
+        self.axes = plt.subplot()
+
+    def draw_graph(self):
+        """Draw the graph in the page"""
+
         self.grid.addWidget(self.canvas)
         self.setLayout(self.grid)
 
-        axes = plt.subplot()
         history = self.__process_data(self.data)
 
         # Labelling
-        axes.set_title("Balance history of the selected account")
-        axes.set_xlabel("Transactions")
-        axes.set_ylabel("Total balance")
+        self.axes.set_title("Balance history of the selected account")
+        self.axes.set_xlabel("Transactions")
+        self.axes.set_ylabel("Total balance")
 
         # Styling
-        fill = axes.fill_between(range(len(history)), history)
+        fill = self.axes.fill_between(range(len(history)), history)
         fill.set_facecolor((.5, .5, .8, .3))
         fill.set_edgecolor((0, 0, .5, .3))
         fill.set_linewidth(3)
-        axes.set_xlim(0, len(history))
-        axes.set_ylim(0, max(history) * 1.5)
-        axes.set_xticks(range(0, len(history), 2))
-        axes.xaxis.set_tick_params(size=0)
-        axes.yaxis.set_tick_params(size=0)
-        axes.spines['right'].set_color((.8, .8, .8))
-        axes.spines['top'].set_color((.8, .8, .8))
-        axes.ticklabel_format(style='plain')
-        axes.xaxis.get_label().set_style('italic')
-        axes.yaxis.get_label().set_style('italic')
-        axes.xaxis.get_label().set_size(10)
-        axes.yaxis.get_label().set_size(10)
-        axes.title.set_weight('bold')
+        self.axes.set_xlim(0, len(history))
+        self.axes.set_ylim(0, max(history) * 1.5)
+        self.axes.set_xticks(range(0, len(history), 2))
+        self.axes.xaxis.set_tick_params(size=0)
+        self.axes.yaxis.set_tick_params(size=0)
+        self.axes.spines['right'].set_color((.8, .8, .8))
+        self.axes.spines['top'].set_color((.8, .8, .8))
+        self.axes.ticklabel_format(style='plain')
+        self.axes.xaxis.get_label().set_style('italic')
+        self.axes.yaxis.get_label().set_style('italic')
+        self.axes.xaxis.get_label().set_size(10)
+        self.axes.yaxis.get_label().set_size(10)
+        self.axes.title.set_weight('bold')
 
-        axes.plot(range(len(history)), history)
+        self.axes.plot(range(len(history)), history)
 
     def __process_data(self, data):
         """Takes the full dataframe to return only history of balance"""

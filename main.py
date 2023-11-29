@@ -14,6 +14,7 @@ class MainPage(QWidget):
         super(MainPage, self).__init__()
 
         self.address = ""
+        self.created = False
 
         grid = QGridLayout()
         self.setLayout(grid)
@@ -52,6 +53,11 @@ class MainPage(QWidget):
 
     def set_pages(self, transactions):
         """Sets the pages of the UI"""
+        if self.created:  # If data is already inserted, clear it
+            self.network.clear_network()
+            self.table.clear_table()
+            self.graph.figure.clear()
+
         self.network.address = self.address
         self.network.transactions = transactions
         self.network.draw_network()
@@ -59,6 +65,8 @@ class MainPage(QWidget):
         self.table.draw_table()
         self.graph.data = transactions
         self.graph.draw_graph()
+
+        self.created = True
 
 
 if __name__ == '__main__':

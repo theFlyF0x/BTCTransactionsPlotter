@@ -64,3 +64,7 @@ class TablePage(QTableWidget):
                     self.item(row, col).setBackground(QColor(0, 255, 0, 100))
                 else:
                     self.item(row, col).setBackground(QColor(255, 0, 0, 100))
+
+    def clear_table(self):
+        while self.rowCount() > 0:
+            self.removeRow(0)

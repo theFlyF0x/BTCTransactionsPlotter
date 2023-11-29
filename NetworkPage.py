@@ -14,10 +14,16 @@ class NetworkPage(QWidget):
         self.address = ''
         self.transactions = None
 
+
+
     def draw_network(self):
         """Draws the network in the page"""
         grid = QGridLayout()
         self.setLayout(grid)
+
+        self.figure = plt.figure()
+        self.canvas = FigureCanvas(self.figure)
+        self.graph = nx.DiGraph()  # Main graph object
 
         # Add lateral buttons
         buttons_layout = QVBoxLayout()
@@ -34,12 +40,8 @@ class NetworkPage(QWidget):
         button_up.clicked.connect(self.draw_leafs)  # Button event
 
         # Container for the network graph
-        self.figure = plt.figure()
-        self.canvas = FigureCanvas(self.figure)
         grid.addWidget(self.canvas, 0, 1)
         grid.addWidget(buttons_section, 0, 0)
-
-        self.graph = nx.DiGraph()  # Main graph object
 
         self.populate_network(self.transactions)
 
@@ -116,3 +118,6 @@ class NetworkPage(QWidget):
             raw = retrieve_transactions(node)
             processed = process_data(raw, node)
             self.populate_network(processed)
+
+    def clear_network(self):
+        self.graph.clear()
